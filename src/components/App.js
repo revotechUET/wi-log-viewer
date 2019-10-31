@@ -1,7 +1,11 @@
-import React, {Suspense} from 'react';
-import {BrowserRouter, Switch, Redirect, withRouter} from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { BrowserRouter, Switch, Redirect, withRouter, Route } from 'react-router-dom';
+
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css'; 
+import 'react-toastify/dist/ReactToastify.min.css';
+
+import './App.css';
+
 
 import userService from './../service/user.service';
 
@@ -19,6 +23,7 @@ toast.configure({
     }
 });
 
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -26,29 +31,31 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        this.tokenSub = userService.getTokenSub().subscribe((value)=>{
+        this.tokenSub = userService.getTokenSub().subscribe(() => {
             this.forceUpdate();
         });
     }
 
     componentWillUnmount() {
         if (this.tokenSub) {
-            this.tokenSub.unsubscribe();
+            this.tokenSub.unsubscribe(); ///
         }
     }
 
     render() {
         return (
-            <BrowserRouter>
-            <Suspense fallback={<div>Loading...</div>}>
-                <Switch>
-                    <PrivateRoute path="/" exact = {true} component = {HomePage} valid = {userService.isLogin()} redirect = {"/login"} />
-                    <PrivateRoute path = "/login" exact = {true} component = {Login} valid = {!userService.isLogin()} redirect = {"/"} />
-                    <Redirect to="/" />
-                </Switch>
-            </Suspense>
-            </BrowserRouter>
-
+            <div>
+                <BrowserRouter>
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <Switch>
+                            <PrivateRoute path="/" exact={true} component={HomePage} valid={userService.isLogin()} redirect={"/login"} />
+                            <PrivateRoute path="/login" exact={true} component={Login} valid={!userService.isLogin()} redirect={"/"} />
+                            <Route path="/test" exact component={() => <h1>Hello</h1>} />
+                            <Redirect to="/" />
+                        </Switch>
+                    </Suspense>
+                </BrowserRouter>
+            </div>
         );
     }
 }
