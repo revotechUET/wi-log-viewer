@@ -89,7 +89,7 @@ class Login extends React.Component{
             this.loginSubcriber = apiService.login(this.state.username, this.state.password)
             .subscribe({
                 next: (rs)=>{
-                    console.log(rs);
+                    rs = rs.data;
                     //this.cancelLoginSubmit();
                     userService.setToken(rs.content.token);
                     toast.success("Login successfully");
