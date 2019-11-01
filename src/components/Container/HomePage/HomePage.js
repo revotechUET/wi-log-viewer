@@ -3,16 +3,22 @@ import { withRouter } from 'react-router-dom';
 
 import LoadingOverlay from './../../LoadingOverlay/LoadingOverlay';
 import InfiniteScrollList from './../../InfiniteScrollList/InfiniteScroll-List';
-import Infinite from 'react-infinite';
 
 import { toast } from 'react-toastify';
 
 import apiService from './../../../service/api.service';
-import dataFlowService from './isolate.service';
+//import dataFlowService from './isolate.service';
 
+import DataFlow from './../../../service/dataflow-builder.service';
+
+const dataFlowService = new DataFlow({type:0, value:[]});
 
 function MyLine(props) {
-    return <div style={{height: props.height + "px"}}>{props.elValue.message}</div>
+    return (
+    <React.Fragment>
+        {props.elValue.message}
+    </React.Fragment>
+    );
 }
 
 class HomePage extends React.Component {
@@ -31,6 +37,19 @@ class HomePage extends React.Component {
             disable: "",
             logs: []
         }
+    }
+
+    componentDidMount() {
+        this.searchLogQuerySnapshot = null;
+        //reset
+        this.setState({
+            timelast: '15m',
+            username: "",
+            projectname: "",
+            disable: "",
+            logs: []
+        });
+        dataFlowService.putData({type: 0, value: []});
     }
 
     componentWillUnmount() {
@@ -72,22 +91,29 @@ class HomePage extends React.Component {
         if (this.state.projectname.length > 0) {
             match.project = this.state.projectname
         }
-        this.searchLogSub = apiService.searchLog({
+
+        //let search
+        let searchQuery = {
             index: 'backend_log',
             match: match,
             time: {
                 last: this.state.timelast
             },
             limit: 100
-        })
+        }
+
+
+        this.searchLogSub = apiService.searchLog(searchQuery)
             .subscribe({
                 next: (rs) => {
                     rs = rs.data;
                     // this.setState({
                     //     logs: rs.content.hits.map((e) => e._source).reverse()
                     // });
-                    let logs = rs.content.hits.map((e) => e._source).reverse();
-                    dataFlowService.putData(logs);
+                    let logs = rs.content.hits.map((e) => e._source);
+                    dataFlowService.putData({type: 0, value: logs});
+                    //console.log('data:', dataFlowService.getDataValue());
+                    this.searchLogQuerySnapshot = searchQuery;
                     this.enable();
                 },
                 error: (e) => {
@@ -98,7 +124,28 @@ class HomePage extends React.Component {
     }
 
     requestMoreData(lastEl) {
-
+        if (this.searchLogQuerySnapshot) {
+            let searchQuery = Object.assign({}, this.searchLogQuerySnapshot);
+            searchQuery.time = {
+                gte: "now-" + this.searchLogQuerySnapshot.time.last,
+                lt: lastEl.timestamp
+            }
+            this.disable();
+            this.searchLogSub = apiService.searchLog(searchQuery)
+            .subscribe({
+                next: (rs)=>{
+                    rs = rs.data;
+                    let logs = rs.content.hits.map((e)=>e._source);
+                    dataFlowService.putData({type: 1, value: dataFlowService.getDataValue().value.concat(logs)});
+                    //dataFlowService.putData(newLogs);
+                    this.enable();
+                },
+                error: (e)=>{
+                    toast.error(e.message);
+                    this.enable();
+                }
+            });
+        }
     }
 
     cancelSearchSubmit() {
@@ -110,7 +157,6 @@ class HomePage extends React.Component {
     }
 
     render() {
-        console.log(this.state.logs);
         return (
             <div>
                 <span>username:</span><input name="username" onChange={(e) => this.handeChange(e)} type="text" />
@@ -130,7 +176,7 @@ class HomePage extends React.Component {
                 <br />
                 <br />
 
-                <div style = {{height: "500px"}}>
+                <div style = {{height: "500px", width:"600px"}}>
                     <InfiniteScrollList  elHeight = {18} dataFlow = {dataFlowService.getDataFlow()}
                                 onRequestMore = {this.requestMoreData}
                                 elComponent = {MyLine} />

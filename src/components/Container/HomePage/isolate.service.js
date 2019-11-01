@@ -10,6 +10,6 @@ module.exports = {
         dataObsv.next(value);
     },
     getDataValue: function() {
-        return dataObsv.getValue()
+        return dataObsv.getValue().value
     }
 }

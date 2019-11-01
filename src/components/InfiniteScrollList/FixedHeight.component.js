@@ -1,9 +1,10 @@
 import React from 'react';
 
-export default function FixedHeightComponent(Component, fixedHeight, key) {
+export default function FixedHeightComponent(props) {
     return (
-        <div key = {key}  style={{height: fixedHeight + "px"}}>
-            {Component}
+        <div 
+            style={{transform: `translateY(${props.currentIndex * props.fixedHeight}px)`, height: props.fixedHeight + 'px', overflow:'hidden'}}>
+            {props.component}
         </div>
     );
 }
