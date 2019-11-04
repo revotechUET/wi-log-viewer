@@ -176,7 +176,7 @@ class HomePage extends React.Component {
                 <br />
                 <br />
 
-                <div style = {{height: "500px", width:"600px"}}>
+                <div style = {{height: "500px", width:"1000px"}}>
                     <InfiniteScrollList  elHeight = {18} dataFlow = {dataFlowService.getDataFlow()}
                                 onRequestMore = {this.requestMoreData}
                                 elComponent = {MyLine} />
