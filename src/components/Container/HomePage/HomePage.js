@@ -7,16 +7,16 @@ import InfiniteScrollList from './../../InfiniteScrollList/InfiniteScroll-List';
 import { toast } from 'react-toastify';
 
 import apiService from './../../../service/api.service';
+import userService from './../../../service/user.service';
 //import dataFlowService from './isolate.service';
 
 import DataFlow from './../../../service/dataflow-builder.service';
 
-const dataFlowService = new DataFlow({type:0, value:[]});
 
 function MyLine(props) {
     return (
     <React.Fragment>
-        {props.elValue.message}
+        ||||| {props.elValue.level} |||||    ||||| {props.elValue.project} |||||     ||||| {props.elValue.message} |||||
     </React.Fragment>
     );
 }
@@ -29,6 +29,8 @@ class HomePage extends React.Component {
 
         this.cancelSearchSubmit = this.cancelSearchSubmit.bind(this);
         this.requestMoreData = this.requestMoreData.bind(this);
+
+        this.dataFlowService = new DataFlow({type:0, value:[]});
 
         this.state = {
             timelast: '15m',
@@ -49,7 +51,7 @@ class HomePage extends React.Component {
             disable: "",
             logs: []
         });
-        dataFlowService.putData({type: 0, value: []});
+        this.dataFlowService.putData({type: 0, value: []});
     }
 
     componentWillUnmount() {
@@ -111,7 +113,7 @@ class HomePage extends React.Component {
                     //     logs: rs.content.hits.map((e) => e._source).reverse()
                     // });
                     let logs = rs.content.hits.map((e) => e._source);
-                    dataFlowService.putData({type: 0, value: logs});
+                    this.dataFlowService.putData({type: 0, value: logs});
                     //console.log('data:', dataFlowService.getDataValue());
                     this.searchLogQuerySnapshot = searchQuery;
                     this.enable();
@@ -136,7 +138,7 @@ class HomePage extends React.Component {
                 next: (rs)=>{
                     rs = rs.data;
                     let logs = rs.content.hits.map((e)=>e._source);
-                    dataFlowService.putData({type: 1, value: dataFlowService.getDataValue().value.concat(logs)});
+                    this.dataFlowService.putData({type: 1, value: this.dataFlowService.getDataValue().value.concat(logs)});
                     //dataFlowService.putData(newLogs);
                     this.enable();
                 },
@@ -154,6 +156,10 @@ class HomePage extends React.Component {
             this.searchLogSub = null;
         }
         this.enable();
+    }
+    
+    logout() {
+        userService.setToken(null);
     }
 
     render() {
@@ -175,9 +181,12 @@ class HomePage extends React.Component {
 
                 <br />
                 <br />
+                <button onClick={this.logout}>Logout</button>
+                <br />
+                <br />
 
                 <div style = {{height: "500px", width:"1000px"}}>
-                    <InfiniteScrollList  elHeight = {18} dataFlow = {dataFlowService.getDataFlow()}
+                    <InfiniteScrollList  elHeight = {18} dataFlow = {this.dataFlowService.getDataFlow()}
                                 onRequestMore = {this.requestMoreData}
                                 elComponent = {MyLine} />
                 </div>

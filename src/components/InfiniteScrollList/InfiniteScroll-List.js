@@ -28,17 +28,15 @@ class InfiniteScrollList extends React.Component{
 
 
     componentDidMount() {
-        console.log('Mounted');
         this.viewLength = Math.ceil(this.scrollContainer.current.clientHeight / this.props.elHeight);
         this.props.dataFlow.subscribe((value)=>{
             //check if it's a new or a add more
-            console.log(value);
+            //console.log(value);
             this.setState({
                 list: value.value
             }, ()=>{
                 //handle re-count
                 if (value.type == 0) {
-                    console.log('this work');
                     this.scrollContainer.current.scrollTop = 0;
                     // this.setState({
                     //     currentIndex: 0
@@ -73,7 +71,6 @@ class InfiniteScrollList extends React.Component{
     }
 
     render() {
-        console.log(this.state.currentIndex);
         return (
             <div ref={this.scrollContainer} style={{height: "100%", width:"100%", overflow:" auto"}} onScroll={(e) => {this.handleScroll(e);}}>
                 <div style={{height: this.props.elHeight * this.state.list.length}}>

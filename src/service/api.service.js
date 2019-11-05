@@ -30,7 +30,7 @@ function handleAuthFail() {
     // this function will called each time this
     // Observable is subscribed to.
     const subscription = observable.subscribe({
-      next(value) {
+      next: function(value) {
         if (value.data.code === 200) {
           observer.next(value);
         } else if (value.data.code === 401) {
@@ -40,10 +40,13 @@ function handleAuthFail() {
           observer.error({ message: value.data.reason });
         }
       },
-      error(err) {
+      error: function(err) {
+        if (err.message.toString() === "Request failed with status code 401") {
+          userService.setToken(null);
+        }
         observer.error(err);
       },
-      complete() {
+      complete: function() {
         observer.complete();
       }
     });

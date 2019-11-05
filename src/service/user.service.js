@@ -18,7 +18,11 @@ module.exports = {
         return this.getToken();
     },
     setToken: function(newToken) {
-        localStorage.setItem("token", newToken);
+        if (newToken) {
+            localStorage.setItem("token", newToken);
+        } else {
+            localStorage.removeItem("token");
+        }
         token = newToken;
         tokenSub.next(token);
     },

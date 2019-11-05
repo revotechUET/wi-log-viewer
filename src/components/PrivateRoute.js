@@ -11,7 +11,7 @@ import withAuthGuard from './withAuthGuard';
 
 function PrivateRoute(props) {
     //console.log(typeof(new Promise((res,rej)=>{res(true);})));
-    console.log('PrivateRoute:', props);
+    //console.log('PrivateRoute:', props);
     return <Route exact = {props.exact || true} path={props.path} component = {()=>{
         if (props.valid) return <props.component {...getProps(props)}  />;
         else return typeof(props.redirect).toString() === "string" ? <Redirect to={{pathname: props.redirect, state: getUrlSnapShot(props)}} />
