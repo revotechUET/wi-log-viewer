@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 
 import LoadingOverlay from './../../LoadingOverlay/LoadingOverlay';
-import InfiniteScrollList from './../../InfiniteScrollList/InfiniteScroll-List';
+import InfiniteScrollList from '../../InfiniteScrollList';
 
 import { toast } from 'react-toastify';
 
@@ -15,9 +15,9 @@ import DataFlow from './../../../service/dataflow-builder.service';
 
 function MyLine(props) {
     return (
-    <React.Fragment>
+    <div className = "MyLine">
         ||||| {props.elValue.level} |||||    ||||| {props.elValue.project} |||||     ||||| {props.elValue.message} |||||
-    </React.Fragment>
+    </div>
     );
 }
 
@@ -164,7 +164,7 @@ class HomePage extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className = "HomePage">
                 <span>username:</span><input name="username" onChange={(e) => this.handeChange(e)} type="text" />
                 <br />
                 <br />
@@ -185,7 +185,7 @@ class HomePage extends React.Component {
                 <br />
                 <br />
 
-                <div style = {{height: "500px", width:"1000px"}}>
+                <div className="HomePage-List" style = {{height: "500px", width:"1000px"}}>
                     <InfiniteScrollList  elHeight = {18} dataFlow = {this.dataFlowService.getDataFlow()}
                                 onRequestMore = {this.requestMoreData}
                                 elComponent = {MyLine} />

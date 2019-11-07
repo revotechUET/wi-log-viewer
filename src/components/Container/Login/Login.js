@@ -114,6 +114,7 @@ class Login extends React.Component{
 
     render() {
         return (
+            <div className = "Login">
             <div onKeyDown = {(e)=>{if (e.keyCode == 13) return this.submitLogin();}}>
                 <input disabled = {this.state.disable} ref = {this.usernameRef} name="username" value = {this.state.username} onChange = {(e)=>this.handeChange(e)} />
                 <br />
@@ -121,6 +122,7 @@ class Login extends React.Component{
                 <input disabled = {this.state.disable} ref = {this.passwordRef} name="password" type="password" value = {this.state.password} onChange = {(e)=>this.handeChange(e)} />
 
                 <LoadingOverlay active = {this.state.disable} onCancel = {this.cancelLoginSubmit}/>
+            </div>
             </div>
         );
     }

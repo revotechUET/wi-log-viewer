@@ -1,4 +1,3 @@
-
 /*
 ################  WARNING ###################
     This file is just for test. Im trying to use HighOrderComponent pattern 
