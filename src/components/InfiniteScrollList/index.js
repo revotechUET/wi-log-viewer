@@ -77,7 +77,7 @@ class InfiniteScrollList extends React.Component{
                     {this.state.list
                     //filter that idx must in current view
                     .filter((e, idx)=>(idx >= this.state.currentIndex && idx <= this.state.currentIndex + this.viewLength))
-                    .map((value, idx)=> <FixedHeightComponent component = {<this.props.elComponent elValue = {value} />} 
+                    .map((value, idx)=> <FixedHeightComponent component = {<this.props.elComponent elValue = {value} index={idx}/>} 
                                             fixedHeight = {this.props.elHeight} currentIndex = {this.state.currentIndex} key = {idx} />
                     )}
                 </div>

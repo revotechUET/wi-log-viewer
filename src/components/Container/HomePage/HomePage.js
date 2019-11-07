@@ -13,12 +13,15 @@ import userService from './../../../service/user.service';
 
 import DataFlow from './../../../service/dataflow-builder.service';
 
-
+require('./style.less');
 function MyLine(props) {
     return (
-    <div className = "MyLine">
-        ||||| {props.elValue.level} |||||    ||||| {props.elValue.project} |||||     ||||| {props.elValue.message} |||||
-    </div>
+        <div className={(props.index % 2) ? "MyLine odd" : "MyLine even"}>
+            <div className="status-column"></div>
+            <span className="first-column">{props.elValue.level}</span>
+            <span className="second-column">{props.elValue.project}</span>
+            <span className="third-column">{props.elValue.message}</span>
+        </div>
     );
 }
 
@@ -31,10 +34,10 @@ class HomePage extends React.Component {
         this.cancelSearchSubmit = this.cancelSearchSubmit.bind(this);
         this.requestMoreData = this.requestMoreData.bind(this);
 
-        this.dataFlowService = new DataFlow({type:0, value:[]});
+        this.dataFlowService = new DataFlow({ type: 0, value: [] });
 
         this.state = {
-            timelast: '15m',
+            timelast: '30m',
             username: "",
             projectname: "",
             disable: "",
@@ -46,13 +49,13 @@ class HomePage extends React.Component {
         this.searchLogQuerySnapshot = null;
         //reset
         this.setState({
-            timelast: '15m',
+            timelast: '30d',
             username: "",
             projectname: "",
             disable: "",
             logs: []
         });
-        this.dataFlowService.putData({type: 0, value: []});
+        this.dataFlowService.putData({ type: 0, value: [] });
     }
 
     componentWillUnmount() {
@@ -114,7 +117,7 @@ class HomePage extends React.Component {
                     //     logs: rs.content.hits.map((e) => e._source).reverse()
                     // });
                     let logs = rs.content.hits.map((e) => e._source);
-                    this.dataFlowService.putData({type: 0, value: logs});
+                    this.dataFlowService.putData({ type: 0, value: logs });
                     //console.log('data:', dataFlowService.getDataValue());
                     this.searchLogQuerySnapshot = searchQuery;
                     this.enable();
@@ -135,19 +138,19 @@ class HomePage extends React.Component {
             }
             this.disable();
             this.searchLogSub = apiService.searchLog(searchQuery)
-            .subscribe({
-                next: (rs)=>{
-                    rs = rs.data;
-                    let logs = rs.content.hits.map((e)=>e._source);
-                    this.dataFlowService.putData({type: 1, value: this.dataFlowService.getDataValue().value.concat(logs)});
-                    //dataFlowService.putData(newLogs);
-                    this.enable();
-                },
-                error: (e)=>{
-                    toast.error(e.message);
-                    this.enable();
-                }
-            });
+                .subscribe({
+                    next: (rs) => {
+                        rs = rs.data;
+                        let logs = rs.content.hits.map((e) => e._source);
+                        this.dataFlowService.putData({ type: 1, value: this.dataFlowService.getDataValue().value.concat(logs) });
+                        //dataFlowService.putData(newLogs);
+                        this.enable();
+                    },
+                    error: (e) => {
+                        toast.error(e.message);
+                        this.enable();
+                    }
+                });
         }
     }
 
@@ -158,58 +161,54 @@ class HomePage extends React.Component {
         }
         this.enable();
     }
-    
+
     logout() {
         userService.setToken(null);
     }
 
     render() {
         return (
-            <div className = "HomePage">
-                <span>username:</span><input name="username" onChange={(e) => this.handeChange(e)} type="text" />
-                <br />
-                <br />
-                <span name="projectname">project:</span><input name="projectname" onChange={(e) => this.handeChange(e)} type="text" />
-                <br />
-                <br />
-                <span>time:</span>
-                <select name="timelast" value={this.state.timelast} onChange={(e) => this.handeChange(e)}>
-                    {this.timeOptions.map((el, idx) => <option key={idx} value={el.value}>{el.display}</option>)}
-                </select>
-                <br />
-                <br />
-                <button onClick={() => this.submitSearch()}>Submit</button>
+            <div className="HomePage">
+                <div className="setting">
+                    <span>
+                        Log view
+                    </span>
+                    <div>
+                        <span>Username</span>
+                        <input name="username" onChange={(e) => this.handeChange(e)} type="text" />
+                    </div>
+                    <div>
+                        <span name="projectname">Project Id</span>
+                        <input name="projectname" onChange={(e) => this.handeChange(e)} type="text" />
+                    </div>
 
-                <br />
-                <br />
-                <button onClick={this.logout}>Logout</button>
-                <br />
-                <br />
+                    {/* <div>
+                        <span>Time</span>
+                        <select name="timelast" value={this.state.timelast} onChange={(e) => this.handeChange(e)}>
+                            {this.timeOptions.map((el, idx) => <option key={idx} value={el.value}>{el.display}</option>)}
+                        </select>
+                    </div> */}
 
-                <div className="HomePage-List" style = {{height: "500px", width:"1000px"}}>
-                    <InfiniteScrollList  elHeight = {18} dataFlow = {this.dataFlowService.getDataFlow()}
-                                onRequestMore = {this.requestMoreData}
-                                elComponent = {MyLine} />
+                    <div className="submit" onClick={() => this.submitSearch()}>Submit</div>
+
                 </div>
-                    
-                {/* <table style={{ width: "100%" }}>
-                    <tr>
-                        <th>Time</th>
-                        <th>Level</th>
-                        <th>Project</th>
-                        <th>Message</th>
-                    </tr>
-                    {
-                        this.state.logs.map((el, idx) =>
-                            (<tr key={idx}>
-                                <td>{el.timestamp}</td>
-                                <td>{el.level}</td>
-                                <td>{el.project || "NULL"}</td>
-                                <td>{el.message}</td>
-                            </tr>)
-                        )
-                    }
-                </table> */}
+                <div className="main">
+                    <div className={"top-bar"}>
+                        <div className={"search-box"}>
+                            <div style={{ marginRight: '10px', color: '#000' }} className={"ti ti-search"} />
+                            <input placeholder="Filter" />
+                        </div>
+                        <div className={"name"}>Hoang</div>
+                        <div className={"logout-btn"} style={{ cursor: 'pointer' }} onClick={this.logout}>Logout</div>
+                        <div className={"user-picture"} />
+                    </div>
+                    <div className="HomePage-List">
+                        <InfiniteScrollList elHeight={43} dataFlow={this.dataFlowService.getDataFlow()}
+                            onRequestMore={this.requestMoreData}
+                            elComponent={MyLine} />
+                    </div>
+                </div>
+
                 <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
                 {/* <Modal>
                     <button>Hello</button>
