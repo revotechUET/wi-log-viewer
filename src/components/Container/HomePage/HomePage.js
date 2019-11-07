@@ -88,6 +88,7 @@ class HomePage extends React.Component {
         super(props);
 
         this.timeOptions = timeOptions;
+        this.indexOptions = indexOptions;
 
         this.cancelSearchSubmit = this.cancelSearchSubmit.bind(this);
         this.requestMoreData = this.requestMoreData.bind(this);
@@ -98,6 +99,7 @@ class HomePage extends React.Component {
         
         this.state = {
             timelast: '30m',
+            index: "backend_log",
             username: "",
             projectname: "",
             disable: "",
@@ -161,7 +163,7 @@ class HomePage extends React.Component {
 
         //let search
         let searchQuery = {
-            index: 'backend_log',
+            index: this.state.index,
             match: match,
             time: {
                 last: this.state.timelast
@@ -264,6 +266,11 @@ class HomePage extends React.Component {
                 </div>
                 <div className="main">
                     <div className={"top-bar"}>
+                        <div>
+                            <select name="index" value={this.state.index} onChange={(e) => this.handeChange(e)}>
+                                {this.indexOptions.map((el, idx) => <option key={idx} value={el.value}>{el.display}</option>)}
+                            </select>
+                        </div>
                         <div className={"search-box"}>
                             <div style={{ marginRight: '10px', color: '#000' }} className={"ti ti-search"} />
                             <DedayTextInput placeholder="Filter" onChange = {(e)=>{this.searchFilterChanged(e);}} debounceTime = {500}/>
@@ -290,6 +297,13 @@ class HomePage extends React.Component {
 }
 
 export default withRouter(HomePage);
+
+let indexOptions = [
+    {
+        display: "BACKEND SERVICE",
+        value: "backend_log"
+    }
+]
 
 
 let timeOptions = [
