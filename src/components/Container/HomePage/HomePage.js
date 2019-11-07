@@ -21,8 +21,12 @@ require('./style.less');
 function MyLine(props) {
     return (
         <div className={(props.index % 2) ? "MyLine odd" : "MyLine even"}>
-            <div className="status-column"></div>
-            <span className="first-column">{props.elValue.level}</span>
+            {/* <span className="status-column">
+                <div className={(props.elValue.level === 'error') ? "alert" : "infor"}></div>
+            </span> */}
+            <span className="first-column">
+                <div className={(props.elValue.level === 'error') ? "alert" : "infor"}></div>
+                {props.elValue.level}</span>
             <span className="second-column">{props.elValue.project}</span>
             <span className="third-column">{props.elValue.message}</span>
         </div>
