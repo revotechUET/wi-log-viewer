@@ -41,7 +41,7 @@ class InfiniteScrollList extends React.Component{
                     // this.setState({
                     //     currentIndex: 0
                     // });
-                } 
+                }
             });
         });
         // this.setState({

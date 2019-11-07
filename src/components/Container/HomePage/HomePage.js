@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 import LoadingOverlay from './../../LoadingOverlay/LoadingOverlay';
 import InfiniteScrollList from '../../InfiniteScrollList';
+import Modal from './../../Modal';
 
 import { toast } from 'react-toastify';
 
@@ -210,6 +211,9 @@ class HomePage extends React.Component {
                     }
                 </table> */}
                 <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
+                {/* <Modal>
+                    <button>Hello</button>
+                </Modal> */}
             </div>
         );
     }
