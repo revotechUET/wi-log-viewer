@@ -1,4 +1,4 @@
-import './LoadingOverlay.css';
+import './style.css';
 import React from 'react';
 
 export default function(props) {

@@ -6,7 +6,7 @@ import userService from './../../../service/user.service';
 import apiService from './../../../service/api.service';
 
 import './../../App.css';
-import LoadingOverlay from './../../LoadingOverlay/LoadingOverlay';
+import LoadingOverlay from '../../LoadingOverlay';
 
 class Login extends React.Component{
     constructor(props) {

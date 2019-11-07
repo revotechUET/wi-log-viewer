@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
-import LoadingOverlay from './../../LoadingOverlay/LoadingOverlay';
+import LoadingOverlay from '../../LoadingOverlay';
 import InfiniteScrollList from '../../InfiniteScrollList';
 import Modal from './../../Modal';
 
