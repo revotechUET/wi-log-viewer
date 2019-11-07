@@ -1,6 +1,5 @@
 let BehaviorSubject = require('rxjs').BehaviorSubject;
-let dataObsv = new BehaviorSubject([]);
-
+let dataObsv = new BehaviorSubject("");
 
 module.exports = {
     getDataFlow: function() {

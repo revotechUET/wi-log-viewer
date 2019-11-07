@@ -4,14 +4,18 @@ import { withRouter } from 'react-router-dom';
 import LoadingOverlay from '../../LoadingOverlay';
 import InfiniteScrollList from '../../InfiniteScrollList';
 import Modal from './../../Modal';
+import DedayTextInput from './../../DelayTextInput';
 
 import { toast } from 'react-toastify';
+
+import {combineLatest, Observable} from 'rxjs';
 
 import apiService from './../../../service/api.service';
 import userService from './../../../service/user.service';
 //import dataFlowService from './isolate.service';
 
 import DataFlow from './../../../service/dataflow-builder.service';
+import searchFlow from './isolate.service';
 
 require('./style.less');
 function MyLine(props) {
@@ -24,6 +28,56 @@ function MyLine(props) {
         </div>
     );
 }
+var findFilterDataFn = (observable) => new Observable(observer => {
+    // this function will called each time this
+    // Observable is subscribed to.
+    const subscription = observable.subscribe({
+      next: function(value) {
+          observer.next({
+              type: value[0].type,
+              value: value[0].value.filter((e)=> JSON.stringify(e).includes(value[1].toLowerCase()))
+          });
+      },
+      error: function(err) {
+        observer.error(err);
+      },
+      complete: function() {
+        observer.complete();
+      }
+    });
+    // the return value is the teardown function,
+    // which will be invoked when the new
+    // Observable is unsubscribed from.
+    return () => {
+      subscription.unsubscribe();
+    }
+});
+function findFilterData() {
+    return (observable) => new Observable(observer => {
+      // this function will called each time this
+      // Observable is subscribed to.
+      const subscription = observable.subscribe({
+        next: function(value) {
+            observer.next({
+                type: value[0].type,
+                value: value[0].value.filter((e)=> JSON.stringify(e).includes(value[1].toLowerCase()))
+            });
+        },
+        error: function(err) {
+          observer.error(err);
+        },
+        complete: function() {
+          observer.complete();
+        }
+      });
+      // the return value is the teardown function,
+      // which will be invoked when the new
+      // Observable is unsubscribed from.
+      return () => {
+        subscription.unsubscribe();
+      }
+    });
+  }
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -36,12 +90,15 @@ class HomePage extends React.Component {
 
         this.dataFlowService = new DataFlow({ type: 0, value: [] });
 
+        this.filteredDataFlow = combineLatest(this.dataFlowService.getDataFlow(), searchFlow.getDataFlow()).pipe(findFilterDataFn);
+        
         this.state = {
             timelast: '30m',
             username: "",
             projectname: "",
             disable: "",
-            logs: []
+            logs: [],
+            searchFilter: ""
         }
     }
 
@@ -166,6 +223,15 @@ class HomePage extends React.Component {
         userService.setToken(null);
     }
 
+    searchFilterChanged(e) {
+        console.log(e);
+        let value = e;
+        this.setState({
+            searchFilter: value
+        });
+        searchFlow.putData(value);
+    }
+
     render() {
         return (
             <div className="HomePage">
@@ -196,14 +262,15 @@ class HomePage extends React.Component {
                     <div className={"top-bar"}>
                         <div className={"search-box"}>
                             <div style={{ marginRight: '10px', color: '#000' }} className={"ti ti-search"} />
-                            <input placeholder="Filter" />
+                            <DedayTextInput placeholder="Filter" onChange = {(e)=>{this.searchFilterChanged(e);}} debounceTime = {500}/>
+                            {/* <input placeholder="Filter" value={this.state.searchFilter} onChange={(e)=>{this.searchFilterChanged(e);}} /> */}
                         </div>
                         <div className={"name"}>Hoang</div>
                         <div className={"logout-btn"} style={{ cursor: 'pointer' }} onClick={this.logout}>Logout</div>
                         <div className={"user-picture"} />
                     </div>
                     <div className="HomePage-List">
-                        <InfiniteScrollList elHeight={43} dataFlow={this.dataFlowService.getDataFlow()}
+                        <InfiniteScrollList elHeight={43} dataFlow={this.filteredDataFlow}
                             onRequestMore={this.requestMoreData}
                             elComponent={MyLine} />
                     </div>
