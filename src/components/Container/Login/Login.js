@@ -120,7 +120,7 @@ class Login extends React.Component{
                 <br />
                 <br />
                 <input disabled = {this.state.disable} ref = {this.passwordRef} name="password" type="password" value = {this.state.password} onChange = {(e)=>this.handeChange(e)} />
-
+                <button onClick = {()=>this.submitLogin()}>Login</button>
                 <LoadingOverlay active = {this.state.disable} onCancel = {this.cancelLoginSubmit}/>
             </div>
             </div>
