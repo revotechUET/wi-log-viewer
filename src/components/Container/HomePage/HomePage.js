@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 import LoadingOverlay from '../../LoadingOverlay';
 import InfiniteScrollList from '../../InfiniteScrollList';
-import Modal from './../../Modal';
+import CenteredModal from '../../CenteredModal';
 import DedayTextInput from './../../DelayTextInput';
 
 import { toast } from 'react-toastify';
@@ -104,7 +104,8 @@ class HomePage extends React.Component {
             projectname: "",
             disable: "",
             logs: [],
-            searchFilter: ""
+            searchFilter: "",
+            modalActive: false
         }
     }
 
@@ -230,12 +231,25 @@ class HomePage extends React.Component {
     }
 
     searchFilterChanged(e) {
-        console.log(e);
         let value = e;
         this.setState({
             searchFilter: value
         });
         searchFlow.putData(value);
+    }
+
+    displayDetail(e) {
+        this.setState({
+            modalActive: true,
+            modalValue: e
+        });
+    }
+
+    onCancel() {
+        this.setState({
+            modalActive: false,
+            modalValue: {}
+        })
     }
 
     render() {
@@ -273,7 +287,7 @@ class HomePage extends React.Component {
                         </div>
                         <div className={"search-box"}>
                             <div style={{ marginRight: '10px', color: '#000' }} className={"ti ti-search"} />
-                            <DedayTextInput placeholder="Filter" onChange = {(e)=>{this.searchFilterChanged(e);}} debounceTime = {500}/>
+                            <DedayTextInput placeholder="Filter" onChange = {(e)=>{this.searchFilterChanged(e);}} debounceTime = {400}/>
                             {/* <input placeholder="Filter" value={this.state.searchFilter} onChange={(e)=>{this.searchFilterChanged(e);}} /> */}
                         </div>
                         <div className={"name"}>Hoang</div>
@@ -283,14 +297,22 @@ class HomePage extends React.Component {
                     <div className="HomePage-List">
                         <InfiniteScrollList elHeight={43} dataFlow={this.filteredDataFlow}
                             onRequestMore={this.requestMoreData}
-                            elComponent={MyLine} />
+                            elComponent={MyLine} onElementClick = {(el)=>{this.displayDetail(el)}}/>
                     </div>
                 </div>
 
                 <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
-                {/* <Modal>
-                    <button>Hello</button>
-                </Modal> */}
+                <CenteredModal onCancel = {()=>{this.onCancel()}} active = {this.state.modalActive}>
+                    <div style={{backgroundColor: "white", padding: "10px", border: "solid 1px blue"}}>
+                        <pre>
+                            <code>
+                                {
+                                    JSON.stringify(this.state.modalValue, null, 4)
+                                }
+                            </code>
+                        </pre>
+                    </div>
+                </CenteredModal>
             </div>
         );
     }

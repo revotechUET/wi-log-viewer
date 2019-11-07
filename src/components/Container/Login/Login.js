@@ -24,7 +24,13 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        this.urlSnapshot = this.props.location.state.urlSnapshot || this.props.urlSnapshot;
+        if (this.props.location) {
+            if (this.props.location.state) {
+                if (this.props.location.urlSnapshot) {
+                    this.urlSnapshot = this.props.location.state.urlSnapshot;
+                } else this.urlSnapshot = this.props.urlSnapshot;
+            } else this.urlSnapshot = this.props.urlSnapshot;
+        } else this.urlSnapshot = this.props.urlSnapshot;
     }
 
     componentWillUnmount() {

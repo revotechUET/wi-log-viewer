@@ -1,4 +1,5 @@
 let config_DEFAULT = require('./default');
+let config_PRODUCTION = require('./default');
 
 function getConfig() {
     if (process.env.NODE_ENV === 'dev') {

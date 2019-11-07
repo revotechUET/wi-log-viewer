@@ -29,7 +29,7 @@ class InfiniteScrollList extends React.Component{
 
     componentDidMount() {
         this.viewLength = Math.ceil(this.scrollContainer.current.clientHeight / this.props.elHeight);
-        this.props.dataFlow.subscribe((value)=>{
+        this.dataFlowSubscriber = this.props.dataFlow.subscribe((value)=>{
             //check if it's a new or a add more
             //console.log(value);
             this.setState({
@@ -51,7 +51,10 @@ class InfiniteScrollList extends React.Component{
     }
 
     componentWillUnmount() {
-        this.props.dataFlow.unsubscribe();
+        if (this.dataFlowSubscriber) {
+            this.dataFlowSubscriber.unsubscribe();
+            this.dataFlowSubscriber = null;
+        }
     }
 
     handleScroll(e) {
@@ -77,7 +80,7 @@ class InfiniteScrollList extends React.Component{
                     {this.state.list
                     //filter that idx must in current view
                     .filter((e, idx)=>(idx >= this.state.currentIndex && idx <= this.state.currentIndex + this.viewLength))
-                    .map((value, idx)=> <FixedHeightComponent component = {<this.props.elComponent elValue = {value} index={idx}/>} 
+                    .map((value, idx)=> <FixedHeightComponent onClick={()=>{this.props.onElementClick(value)}} component = {<this.props.elComponent elValue = {value} index={idx}/>} 
                                             fixedHeight = {this.props.elHeight} currentIndex = {this.state.currentIndex} key = {idx} />
                     )}
                 </div>

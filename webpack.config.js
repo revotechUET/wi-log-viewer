@@ -1,6 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+//const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 webpackConfigure = {
 	entry: "./src/index.js",
@@ -24,6 +24,16 @@ webpackConfigure = {
 			{
 				test: /\.less$/,
 				use: ['style-loader', 'css-loader', 'less-loader']
+			},
+			{
+				test: /\.(png|jpg|gif|svg|eot|woff|ttf|svg|woff2)$/,
+				use: {
+				  loader: 'file-loader',
+				  options: {
+					name: '[name].[ext]',
+					outputPath: './assets/' //define the output of the file (relative path to the workdir)
+				  }
+				}
 			}
 		]
 	},
