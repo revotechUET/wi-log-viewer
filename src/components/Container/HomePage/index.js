@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 
 import LoadingOverlay from '../../LoadingOverlay';
-import InfiniteScrollList from '../../InfiniteScrollList';
+import InfiniteScrollVirtualList from '../../InfiniteScrollVirtualList';
 import CenteredModal from '../../CenteredModal';
 import DedayTextInput from './../../DelayTextInput';
 
@@ -16,6 +16,8 @@ import userService from './../../../service/user.service';
 
 import DataFlow from './../../../service/dataflow-builder.service';
 import searchFlow from './isolate.service';
+import Editable from '../../Editable';
+import SearchableDropdown from '../../SearchableDropdown';
 
 require('./style.less');
 function MyLine(props) {
@@ -269,9 +271,9 @@ class HomePage extends React.Component {
                     </div>
                     <div>
                         <span>Time</span>
-
-
                     </div>
+                    <Editable initValue = "Hello" />
+                    <SearchableDropdown />
                     {/* <div>
                         <span>Time</span>
                         <select name="timelast" value={this.state.timelast} onChange={(e) => this.handeChange(e)}>
@@ -299,14 +301,13 @@ class HomePage extends React.Component {
                         <div className={"user-picture"} />
                     </div>
                     <div className="HomePage-List">
-                        <InfiniteScrollList elHeight={43} dataFlow={this.filteredDataFlow}
+                        <InfiniteScrollVirtualList elHeight={43} dataFlow={this.filteredDataFlow}
                             onRequestMore={this.requestMoreData}
                             elComponent={MyLine} onElementClick = {(el)=>{this.displayDetail(el)}}/>
-                    <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
                     </div>
                 </div>
 
-                
+                <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
                 <CenteredModal onCancel = {()=>{this.onCancel()}} active = {this.state.modalActive}>
                     <div style={{backgroundColor: "white", padding: "10px", border: "solid 1px blue"}}>
                         <pre>

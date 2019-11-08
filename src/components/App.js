@@ -9,10 +9,10 @@ import './App.css';
 
 import userService from './../service/user.service';
 
-import AsyncPrivateRoute from './AsyncPrivateRoute';
+//import AsyncPrivateRoute from './AsyncPrivateRoute';
 import PrivateRoute from './PrivateRoute';
-import HomePage from './Container/HomePage/HomePage';
-import Login from './Container/Login/Login';
+import HomePage from './Container/HomePage';
+import Login from './Container/Login';
 
 toast.configure({
     autoClose: 3000,

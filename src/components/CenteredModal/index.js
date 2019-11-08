@@ -1,7 +1,6 @@
 import React from 'react';
 import './style.css';
-import { fromEvent } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import Draggable from 'react-draggable';
 
 export default class CenteredModal extends React.Component {
     constructor(props) {
@@ -20,9 +19,9 @@ export default class CenteredModal extends React.Component {
     render() {
         return (
             <div style={{display: this.props.active?"block":"none"}} className = "modal-background" onClick = {(e)=>{this.onBackGroundClick(e);}}>
-                <div ref={this.contentRef} className="modal-center">
-                    {this.props.children}
-                </div>
+                    <div ref={this.contentRef} className="modal-center">
+                        {this.props.children}
+                    </div>
             </div>
         );
     }

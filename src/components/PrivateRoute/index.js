@@ -1,7 +1,6 @@
 import React from 'react';
 import {Route, withRouter, Redirect} from 'react-router-dom';
 
-import withAuthGuard from './withAuthGuard';
 // function AsyncPrivateRoute(props) {
 //     return <Route exact path={props.path} component = {()=>{
 //         if (props.valid) return <LoadingMiddleWare props = {props} />;

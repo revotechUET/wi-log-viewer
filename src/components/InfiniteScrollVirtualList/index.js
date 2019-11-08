@@ -15,7 +15,7 @@ import FixedHeightComponent from './FixedHeight.component';
 
 */
 
-class InfiniteScrollList extends React.Component{
+class InfiniteScrollVirtualList extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -64,7 +64,9 @@ class InfiniteScrollList extends React.Component{
         e.preventDefault();
         // console.log('scrollTop:', scrollTop);
         if (scrollHeight - scrollTop === clientHeight) {
-            this.props.onRequestMore(this.state.list[this.state.list.length-1], this.state.list.length);
+            if (this.props.onRequestMore) {
+                this.props.onRequestMore(this.state.list[this.state.list.length-1], this.state.list.length);
+            }
         }
 
         this.setState({
@@ -89,4 +91,4 @@ class InfiniteScrollList extends React.Component{
     }
 }
 
-export default InfiniteScrollList;
+export default InfiniteScrollVirtualList;
