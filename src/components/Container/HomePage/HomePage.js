@@ -8,7 +8,7 @@ import DedayTextInput from './../../DelayTextInput';
 
 import { toast } from 'react-toastify';
 
-import {combineLatest, Observable} from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 
 import apiService from './../../../service/api.service';
 import userService from './../../../service/user.service';
@@ -36,52 +36,52 @@ var findFilterDataFn = (observable) => new Observable(observer => {
     // this function will called each time this
     // Observable is subscribed to.
     const subscription = observable.subscribe({
-      next: function(value) {
-          observer.next({
-              type: value[0].type,
-              value: value[0].value.filter((e)=> JSON.stringify(e).includes(value[1].toLowerCase()))
-          });
-      },
-      error: function(err) {
-        observer.error(err);
-      },
-      complete: function() {
-        observer.complete();
-      }
+        next: function (value) {
+            observer.next({
+                type: value[0].type,
+                value: value[0].value.filter((e) => JSON.stringify(e).includes(value[1].toLowerCase()))
+            });
+        },
+        error: function (err) {
+            observer.error(err);
+        },
+        complete: function () {
+            observer.complete();
+        }
     });
     // the return value is the teardown function,
     // which will be invoked when the new
     // Observable is unsubscribed from.
     return () => {
-      subscription.unsubscribe();
+        subscription.unsubscribe();
     }
 });
 function findFilterData() {
     return (observable) => new Observable(observer => {
-      // this function will called each time this
-      // Observable is subscribed to.
-      const subscription = observable.subscribe({
-        next: function(value) {
-            observer.next({
-                type: value[0].type,
-                value: value[0].value.filter((e)=> JSON.stringify(e).includes(value[1].toLowerCase()))
-            });
-        },
-        error: function(err) {
-          observer.error(err);
-        },
-        complete: function() {
-          observer.complete();
+        // this function will called each time this
+        // Observable is subscribed to.
+        const subscription = observable.subscribe({
+            next: function (value) {
+                observer.next({
+                    type: value[0].type,
+                    value: value[0].value.filter((e) => JSON.stringify(e).includes(value[1].toLowerCase()))
+                });
+            },
+            error: function (err) {
+                observer.error(err);
+            },
+            complete: function () {
+                observer.complete();
+            }
+        });
+        // the return value is the teardown function,
+        // which will be invoked when the new
+        // Observable is unsubscribed from.
+        return () => {
+            subscription.unsubscribe();
         }
-      });
-      // the return value is the teardown function,
-      // which will be invoked when the new
-      // Observable is unsubscribed from.
-      return () => {
-        subscription.unsubscribe();
-      }
     });
-  }
+}
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -96,7 +96,7 @@ class HomePage extends React.Component {
         this.dataFlowService = new DataFlow({ type: 0, value: [] });
 
         this.filteredDataFlow = combineLatest(this.dataFlowService.getDataFlow(), searchFlow.getDataFlow()).pipe(findFilterDataFn);
-        
+
         this.state = {
             timelast: '30m',
             index: "backend_log",
@@ -267,7 +267,11 @@ class HomePage extends React.Component {
                         <span name="projectname">Project Id</span>
                         <input name="projectname" onChange={(e) => this.handeChange(e)} type="text" />
                     </div>
+                    <div>
+                        <span>Time</span>
 
+
+                    </div>
                     {/* <div>
                         <span>Time</span>
                         <select name="timelast" value={this.state.timelast} onChange={(e) => this.handeChange(e)}>
@@ -298,10 +302,11 @@ class HomePage extends React.Component {
                         <InfiniteScrollList elHeight={43} dataFlow={this.filteredDataFlow}
                             onRequestMore={this.requestMoreData}
                             elComponent={MyLine} onElementClick = {(el)=>{this.displayDetail(el)}}/>
+                    <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
                     </div>
                 </div>
 
-                <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
+                
                 <CenteredModal onCancel = {()=>{this.onCancel()}} active = {this.state.modalActive}>
                     <div style={{backgroundColor: "white", padding: "10px", border: "solid 1px blue"}}>
                         <pre>
@@ -323,6 +328,15 @@ export default withRouter(HomePage);
 let indexOptions = [
     {
         display: "BACKEND SERVICE",
+        value: "backend_log"
+    }, {
+        display: "BACKEND SERVICE1",
+        value: "backend_log"
+    }, {
+        display: "BACKEND SERVICE2",
+        value: "backend_log"
+    }, {
+        display: "BACKEND SERVICE3",
         value: "backend_log"
     }
 ]

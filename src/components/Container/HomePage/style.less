@@ -118,6 +118,12 @@
 .MyLine {
     display      : flex;
     border-bottom: 1px solid #e9eef1;
+    transition: all ease-in 0.05s;
+
+    &:hover {
+        background: #f5f9fc;
+        transition: all ease-in 0.05s;
+    }
 
     &>span {
         padding      : 15px;
@@ -161,4 +167,7 @@
 }
 .odd {
     // background: red;
+}
+.HomePage-List {
+    position: relative;
 }
