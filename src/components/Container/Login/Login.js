@@ -84,11 +84,13 @@ class Login extends React.Component {
                 //username null
                 toast.error("Username can not null!");
                 this.usernameRef.current.focus();
+                return;
             }
             if (this.state.password.length == 0) {
                 //username null
                 toast.error("Password can not null!");
                 this.passwordRef.current.focus();
+                return;
             }
             this.disable();
             //this.loadSub = loadingOverlayService.pushLoad();
@@ -128,20 +130,23 @@ class Login extends React.Component {
             //         <LoadingOverlay active = {this.state.disable} onCancel = {this.cancelLoginSubmit}/>
             //     </div>
             // </div>
-            <div className="dialog-login" onKeyDown={(e) => { if (e.keyCode == 13) return this.submitLogin(); }}>
-                <div className="left-dialog-login">
-                    <div className="logo"></div>
-                    <div className="info-dialog-login"> </div>
-                    <div className="description">&copy; 2019 Revotech</div>
+            <div>
+                <div className="dialog-login" onKeyDown={(e) => { if (e.keyCode == 13) return this.submitLogin(); }}>
+                    <div className="left-dialog-login">
+                        <div className="logo"></div>
+                        <div className="info-dialog-login"> </div>
+                        <div className="description">&copy; 2019 Revotech</div>
+                    </div>
+                    <div className="right-dialog-login">
+                        <div style={{ marginBottom: '10px' }}>Login to</div>
+                        <div style={{ marginBottom: '40px', fontWeight: '500', fontSize: '20px' }}>I2G Log View</div>
+                        <input className="input-login" placeholder="Username" disabled={this.state.disable} ref={this.usernameRef} name="username" value={this.state.username} onChange={(e) => this.handeChange(e)} />
+                        <input className="input-login" placeholder="Password" disabled={this.state.disable} ref={this.passwordRef} name="password" type="password" value={this.state.password} onChange={(e) => this.handeChange(e)} />
+                        <input className="submit-login" type="Submit" value="LOGIN" onChange={(e) => { e.preventDefault() }} onClick={(e) => { this.submitLogin(); }} />
+                        <div style={{ fontSize: '10px', fontStyle: 'italic', marginTop: '20px' }}> Please contact us via support@i2g.cloud for any trouble signing in to I2G log view.</div>
+                    </div>
                 </div>
-                <div className="right-dialog-login">
-                    <div style={{ marginBottom: '10px' }}>Login to</div>
-                    <div style={{ marginBottom: '40px', fontWeight: '500', fontSize: '20px' }}>I2G Log View</div>
-                    <input className="input-login" placeholder="Username" disabled = {this.state.disable} ref = {this.usernameRef} name="username" value = {this.state.username} onChange = {(e)=>this.handeChange(e)} />
-                    <input className="input-login" placeholder="Password" disabled = {this.state.disable} ref = {this.passwordRef} name="password" type="password" value = {this.state.password} onChange = {(e)=>this.handeChange(e)} />
-                    <input className="submit-login" type="Submit" value="LOGIN" onChange={(e) => { e.preventDefault() }} onClick={(e) => { this.submitLogin(); }} />
-                    <div style={{ fontSize: '10px', fontStyle: 'italic', marginTop: '20px' }}> Please contact us via support@i2g.cloud for any trouble signing in to I2G log view.</div>
-                </div>
+                <LoadingOverlay active={this.state.disable} onCancel={this.cancelLoginSubmit} />
             </div>
         );
     }
