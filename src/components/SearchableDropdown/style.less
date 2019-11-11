@@ -4,6 +4,7 @@
     top: 28px;
     right: -50%;
     display: block;
+    box-shadow: 0 10px 29px #00000014;
     .dropdown-carret {
         position: absolute;
         top: -20px;
@@ -32,6 +33,7 @@
 
         &>div {
             padding: 10px;
+            cursor: pointer;
             &:hover {
                 background: #a7abae;
                 transition: all ease-in 0.2s;
@@ -39,6 +41,12 @@
             &:active {
                 background: #86888a;
                 transition: all ease-in 0.2s;
+            }
+            &.active {
+                background: #eef8ff;
+                color: #4b7def;
+                font-weight: bold;
+                // font-weight: bold;
             }
         }
     }
@@ -48,6 +56,3 @@
     display: none
 }
 
-.active {
-    font-weight: "bold";
-}

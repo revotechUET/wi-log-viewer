@@ -53,7 +53,7 @@ export default class SearchableDropdown extends React.Component {
                 <div className = {this.state.edditing ? "dropdown-content" : "dropdown-content hidden"}>
                     <div className="dropdown-carret"></div>
                     <div className="dropdown-search">
-                        <DelayTextInput />
+                        <DelayTextInput placeholder="Search"/>
                     </div>
                     <div className="dropdown-list-item">
                         {this.props.choices.map((e, idx) => (
