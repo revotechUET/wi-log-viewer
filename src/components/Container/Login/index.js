@@ -2,8 +2,8 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import userService from './../../../service/user.service';
-import apiService from './../../../service/api.service';
+import userService from '../../../service/user.service';
+import apiService from '../../../service/api.service';
 
 import './style.less';
 import LoadingOverlay from '../../LoadingOverlay';

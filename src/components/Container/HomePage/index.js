@@ -4,20 +4,22 @@ import { withRouter } from 'react-router-dom';
 import LoadingOverlay from '../../LoadingOverlay';
 import InfiniteScrollVirtualList from '../../InfiniteScrollVirtualList';
 import CenteredModal from '../../CenteredModal';
-import DedayTextInput from './../../DelayTextInput';
+import DedayTextInput from '../../DelayTextInput';
 
 import { toast } from 'react-toastify';
 
 import { combineLatest, Observable } from 'rxjs';
 
-import apiService from './../../../service/api.service';
-import userService from './../../../service/user.service';
+import apiService from '../../../service/api.service';
+import userService from '../../../service/user.service';
 //import dataFlowService from './isolate.service';
 
-import DataFlow from './../../../service/dataflow-builder.service';
+import DataFlow from '../../../utils/dataflow-builder.util';
 import searchFlow from './isolate.service';
 import Editable from '../../Editable';
 import SearchableDropdown from '../../SearchableDropdown';
+
+import {findFilteredDataFn} from './../../../utils/observable.util';
 
 require('./style.less');
 function MyLine(props) {
@@ -34,30 +36,7 @@ function MyLine(props) {
         </div>
     );
 }
-var findFilterDataFn = (observable) => new Observable(observer => {
-    // this function will called each time this
-    // Observable is subscribed to.
-    const subscription = observable.subscribe({
-        next: function (value) {
-            observer.next({
-                type: value[0].type,
-                value: value[0].value.filter((e) => JSON.stringify(e).includes(value[1].toLowerCase()))
-            });
-        },
-        error: function (err) {
-            observer.error(err);
-        },
-        complete: function () {
-            observer.complete();
-        }
-    });
-    // the return value is the teardown function,
-    // which will be invoked when the new
-    // Observable is unsubscribed from.
-    return () => {
-        subscription.unsubscribe();
-    }
-});
+
 function findFilterData() {
     return (observable) => new Observable(observer => {
         // this function will called each time this
@@ -97,7 +76,7 @@ class HomePage extends React.Component {
 
         this.dataFlowService = new DataFlow({ type: 0, value: [] });
 
-        this.filteredDataFlow = combineLatest(this.dataFlowService.getDataFlow(), searchFlow.getDataFlow()).pipe(findFilterDataFn);
+        this.filteredDataFlow = combineLatest(this.dataFlowService.getDataFlow(), searchFlow.getDataFlow()).pipe(findFilteredDataFn);
 
         this.state = {
             timelast: '30m',

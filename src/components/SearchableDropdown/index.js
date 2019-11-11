@@ -23,9 +23,21 @@ export default class SearchableDropdown extends React.Component {
 
     render() {
         return (
-            <div>
-                hello
-            </div>
+            <React.Fragment>
+            {this.state.edditing ?
+                //this is search input and list
+                <div>
+                    
+                </div>
+
+                :
+
+                //this is value
+                <div>
+                    {}
+                </div>
+            }
+            </React.Fragment>
         );
     }
 }
