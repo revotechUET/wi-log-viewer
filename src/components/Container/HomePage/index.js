@@ -251,8 +251,9 @@ class HomePage extends React.Component {
                     <div>
                         <span>Time</span>
                     </div>
-                    <Editable initValue = "Hello" />
-                    <SearchableDropdown />
+                    {/* <Editable initValue = "Hello" /> */}
+                    <br/>
+                    <br/>
                     {/* <div>
                         <span>Time</span>
                         <select name="timelast" value={this.state.timelast} onChange={(e) => this.handeChange(e)}>
@@ -266,9 +267,7 @@ class HomePage extends React.Component {
                 <div className="main">
                     <div className={"top-bar"}>
                         <div>
-                            <select name="index" value={this.state.index} onChange={(e) => this.handeChange(e)}>
-                                {this.indexOptions.map((el, idx) => <option key={idx} value={el.value}>{el.display}</option>)}
-                            </select>
+                            <SearchableDropdown choices = {this.timeOptions}/>
                         </div>
                         <div className={"search-box"}>
                             <div style={{ marginRight: '10px', color: '#000' }} className={"ti ti-search"} />

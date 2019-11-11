@@ -1,0 +1,14 @@
+.dropdown-content {
+    z-index: 2;
+    position: absolute;
+    top: 28px;
+    display: block;
+}
+
+.hidden {
+    display: none
+}
+
+.active {
+    font-weight: "bold";
+}

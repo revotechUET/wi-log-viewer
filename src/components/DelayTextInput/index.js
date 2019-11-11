@@ -16,7 +16,9 @@ export default class DelayTextInput extends React.Component {
     componentDidMount() {
         this.onChangeValueStream.next(this.props.initValue || "");
         this.subcriber = this.onChangeValueStream.subscribe((value)=>{
-            this.props.onChange(value);
+            if (this.props.onChange) {
+                this.props.onChange(value);
+            }
         });
     }
 
