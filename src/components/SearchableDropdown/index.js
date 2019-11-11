@@ -13,8 +13,8 @@ export default class SearchableDropdown extends React.Component {
         super(props);
 
         this.state = {
-            selected: this.props.initValue || {},
-            edditing: false
+            edditing: false,
+            searchValue: ""
         };
 
         this.contentRef = React.createRef();
@@ -22,8 +22,8 @@ export default class SearchableDropdown extends React.Component {
 
     componentDidMount() {
         this.setState({
-            selected: this.props.initValue || {},
-            edditing: false
+            edditing: false,
+            searchValue: ""
         });
         this.clickStream = fromEvent(document, 'click').subscribe((e)=>{
             if (!this.contentRef.current.contains(e.target)) {
@@ -36,29 +36,44 @@ export default class SearchableDropdown extends React.Component {
 
     handleClick(e) {
         this.setState({
-            selected: e,
             edditing: false
         });
         if (this.props.onChange) {
-            this.props.onChange(e);
+            this.props.onChange(e.value);
         }
     }
 
+    getFilteredList(list) {
+        if (this.state.searchValue.length > 0) {
+            return list.filter((e)=>JSON.stringify(e).toLowerCase().includes(this.state.searchValue.toLowerCase()));
+        }
+        return list;
+    }
+
+    getDisplayFromValue(e) {
+        let idx = this.props.choices.findIndex((el)=>el.value == e);
+        if (idx < 0) return null;
+        return this.props.choices[idx].display;
+    }
+
     render() {
+        console.log(this.props.value);
         return (
             <div style = {{position: "relative", display: "inline-block"}} ref = {this.contentRef}>
                 <div onClick = {()=>{this.setState({edditing: !this.state.edditing})}}>
-                    {this.state.selected.display || "NOTHING"}
+                    {
+                        this.getDisplayFromValue(this.props.value) || "Empty"
+                    }
                 </div>
                 <div className = {this.state.edditing ? "dropdown-content" : "dropdown-content hidden"}>
                     <div className="dropdown-carret"></div>
                     <div className="dropdown-search">
-                        <DelayTextInput placeholder="Search"/>
+                        <DelayTextInput placeholder="Search" onChange = {(e)=>{this.setState({searchValue: e})}}/>
                     </div>
                     <div className="dropdown-list-item">
-                        {this.props.choices.map((e, idx) => (
+                        {this.getFilteredList(this.props.choices).map((e, idx) => (
                             <div key={idx} onClick = {()=>{this.handleClick(e)}} 
-                                className = {e.value == this.state.selected.value ? "active": ""}>
+                                className = {e.value == this.props.value ? "active": ""}>
                                 {e.display}
                             </div>
                         ))}

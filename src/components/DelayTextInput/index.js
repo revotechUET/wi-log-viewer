@@ -10,7 +10,7 @@ export default class DelayTextInput extends React.Component {
         };
         //console.log(this.props);
         this.onChangeValueStream = new BehaviorSubject("");
-        this.onChangeValueStream = this.onChangeValueStream.pipe(debounce(()=>timer(this.props.debounceTime)));
+        this.onChangeValueStream = this.onChangeValueStream.pipe(debounce(()=>timer(this.props.debounceTime || 300)));
     }
 
     componentDidMount() {

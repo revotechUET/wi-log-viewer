@@ -8,7 +8,7 @@ import DedayTextInput from '../../DelayTextInput';
 
 import { toast } from 'react-toastify';
 
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest } from 'rxjs';
 
 import apiService from '../../../service/api.service';
 import userService from '../../../service/user.service';
@@ -35,33 +35,6 @@ function MyLine(props) {
             <span className="third-column">{props.elValue.message}</span>
         </div>
     );
-}
-
-function findFilterData() {
-    return (observable) => new Observable(observer => {
-        // this function will called each time this
-        // Observable is subscribed to.
-        const subscription = observable.subscribe({
-            next: function (value) {
-                observer.next({
-                    type: value[0].type,
-                    value: value[0].value.filter((e) => JSON.stringify(e).includes(value[1].toLowerCase()))
-                });
-            },
-            error: function (err) {
-                observer.error(err);
-            },
-            complete: function () {
-                observer.complete();
-            }
-        });
-        // the return value is the teardown function,
-        // which will be invoked when the new
-        // Observable is unsubscribed from.
-        return () => {
-            subscription.unsubscribe();
-        }
-    });
 }
 
 class HomePage extends React.Component {
@@ -267,7 +240,7 @@ class HomePage extends React.Component {
                 <div className="main">
                     <div className={"top-bar"}>
                         <div>
-                            <SearchableDropdown choices = {this.timeOptions}/>
+                            <SearchableDropdown choices = {this.indexOptions} value = {this.state.index} onChange={(e)=>{this.setState({index: e})}}/>
                         </div>
                         <div className={"search-box"}>
                             <div style={{ marginRight: '10px', color: '#000' }} className={"ti ti-search"} />
@@ -310,13 +283,13 @@ let indexOptions = [
         value: "backend_log"
     }, {
         display: "BACKEND SERVICE1",
-        value: "backend_log"
+        value: "backend_log2"
     }, {
         display: "BACKEND SERVICE2",
-        value: "backend_log"
+        value: "backend_log3"
     }, {
         display: "BACKEND SERVICE3",
-        value: "backend_log"
+        value: "backend_log4"
     }
 ]
 
