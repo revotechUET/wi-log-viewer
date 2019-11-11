@@ -1,6 +1,6 @@
 import React from 'react';
 import { fromEvent } from 'rxjs';
-import './style.css';
+import './style.less';
 import DelayTextInput from '../DelayTextInput';
 
 /*
@@ -51,10 +51,11 @@ export default class SearchableDropdown extends React.Component {
                     {this.state.selected.display || "NOTHING"}
                 </div>
                 <div className = {this.state.edditing ? "dropdown-content" : "dropdown-content hidden"}>
-                    <div>
+                    <div className="dropdown-carret"></div>
+                    <div className="dropdown-search">
                         <DelayTextInput />
                     </div>
-                    <div>
+                    <div className="dropdown-list-item">
                         {this.props.choices.map((e, idx) => (
                             <div key={idx} onClick = {()=>{this.handleClick(e)}} 
                                 className = {e.value == this.state.selected.value ? "active": ""}>
