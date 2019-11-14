@@ -1,7 +1,9 @@
 //user service
+const jwt = require('jsonwebtoken');
 let Subject = require('rxjs').Subject;
 
 let token = null;
+let decoded = null;
 
 let tokenSub = new Subject();
 
@@ -24,9 +26,40 @@ module.exports = {
             localStorage.removeItem("token");
         }
         token = newToken;
+        decoded = null;
         tokenSub.next(token);
     },
     getTokenSub() {
         return tokenSub;
+    },
+    getRole() {
+        if (decoded) return decoded.role;
+        let token = this.getToken();
+        if (token) {
+            try {
+                decoded = jwt.verify(token, 'secretKey');
+                return decoded.role;
+            } catch (e) {
+                this.setToken(null);
+                decoded = null;;
+                return null; 
+            }
+        }
+        return decoded.role;
+    },
+    getUsername() {
+        if (decoded) return decoded.username;
+        let token = this.getToken();
+        if (token) {
+            try {
+                decoded = jwt.verify(token, 'secretKey');
+                return decoded.username;
+            } catch (e) {
+                this.setToken(null);
+                decoded = null;;
+                return null; 
+            }
+        }
+        return decoded.username;
     }
 }

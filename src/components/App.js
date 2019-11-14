@@ -11,8 +11,8 @@ import userService from './../service/user.service';
 
 //import AsyncPrivateRoute from './AsyncPrivateRoute';
 import PrivateRoute from './PrivateRoute';
-import HomePage from './Container/HomePage';
-import Login from './Container/Login';
+import HomePage from './../container/HomePage';
+import Login from './../container/Login';
 
 toast.configure({
     autoClose: 3000,

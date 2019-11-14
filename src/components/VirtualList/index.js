@@ -1,7 +1,6 @@
 import React from 'react';
 
 import FixedHeightComponent from './FixedHeight.component';
-import { fromEvent } from 'rxjs';
 /*
     props:
         elHeight: element height,
@@ -13,9 +12,6 @@ import { fromEvent } from 'rxjs';
             type = 1 will not reset the scroll
         onRequestMore: request for a scroll. param: last element,  and length of current list
         elComponent: a Component to render like with props.value like: <Component elValue={a obj} />
-        onElementClick: function that trigger when a element get clicked
-        //selected: A value (stay tuned)
-        //isSelected: a function that return true if this is a selected one (stay tuned)
 
 */
 
@@ -52,7 +48,6 @@ class InfiniteScrollVirtualList extends React.Component{
         //     currentIndex: 0,
         //     list: []
         // });
-        //fromEvent(this.scrollContainer, 'resize').subscribe((e)=>console.log(e));
     }
 
     componentWillUnmount() {
@@ -86,8 +81,8 @@ class InfiniteScrollVirtualList extends React.Component{
                 <div style={{height: this.props.elHeight * this.state.list.length}}>
                     {this.state.list
                     //filter that idx must in current view
-                    .filter((e, idx)=>(idx >= this.state.currentIndex && idx <= this.state.currentIndex +  Math.ceil(this.scrollContainer.current.clientHeight / this.props.elHeight)))
-                    .map((value, idx)=> <FixedHeightComponent onClick={()=>{if (this.props.onElementClick) this.props.onElementClick(value)}} component = {<this.props.elComponent elValue = {value} index={idx}/>} 
+                    .filter((e, idx)=>(idx >= this.state.currentIndex && idx <= this.state.currentIndex + this.viewLength))
+                    .map((value, idx)=> <FixedHeightComponent onClick={()=>{this.props.onElementClick(value)}} component = {<this.props.elComponent elValue = {value} index={idx}/>} 
                                             fixedHeight = {this.props.elHeight} currentIndex = {this.state.currentIndex} key = {idx} />
                     )}
                 </div>

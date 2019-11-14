@@ -1,27 +1,31 @@
 import React from 'react';
+require('./style.less');
 import { withRouter } from 'react-router-dom';
 
-import LoadingOverlay from '../../LoadingOverlay';
-import InfiniteScrollVirtualList from '../../InfiniteScrollVirtualList';
-import CenteredModal from '../../CenteredModal';
-import DedayTextInput from '../../DelayTextInput';
-
 import { toast } from 'react-toastify';
+import { combineLatest, BehaviorSubject } from 'rxjs';
+import DatePicker from './../../components/DatePicker';
 
-import { combineLatest } from 'rxjs';
+import LoadingOverlay from '../../components/LoadingOverlay';
+import InfiniteScrollVirtualList from '../../components/InfiniteScrollVirtualList';
+import CenteredModal from '../../components/CenteredModal';
+import DedayTextInput from '../../components/DelayTextInput';
 
-import apiService from '../../../service/api.service';
-import userService from '../../../service/user.service';
+
+import apiService from '../../service/api.service';
+import userService from '../../service/user.service';
 //import dataFlowService from './isolate.service';
 
-import DataFlow from '../../../utils/dataflow-builder.util';
+import DataFlow from '../../utils/dataflow-builder.util';
 import searchFlow from './isolate.service';
-import Editable from '../../Editable';
-import SearchableDropdown from '../../SearchableDropdown';
+import Editable from '../../components/Editable';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import {findFilteredDataFn} from './../../utils/observable.util';
 
-import {findFilteredDataFn} from './../../../utils/observable.util';
+import option from './constant';
+import PerformanceDropdown from '../../components/PerformanceDropdown';
 
-require('./style.less');
+
 function MyLine(props) {
     return (
         <div className={(props.index % 2) ? "MyLine odd" : "MyLine even"}>
@@ -41,15 +45,17 @@ class HomePage extends React.Component {
     constructor(props) {
         super(props);
 
-        this.timeOptions = timeOptions;
-        this.indexOptions = indexOptions;
+        this.timeOptions = option.timeOptions;
+        this.indexOptions = option.indexOptions;
 
         this.cancelSearchSubmit = this.cancelSearchSubmit.bind(this);
         this.requestMoreData = this.requestMoreData.bind(this);
 
         this.dataFlowService = new DataFlow({ type: 0, value: [] });
+        this.searchFlow = new BehaviorSubject("");
+        this.userDataFlow = new DataFlow({type: 0, value: []});
 
-        this.filteredDataFlow = combineLatest(this.dataFlowService.getDataFlow(), searchFlow.getDataFlow()).pipe(findFilteredDataFn);
+        this.filteredDataFlow = combineLatest(this.dataFlowService.getDataFlow(), this.searchFlow).pipe(findFilteredDataFn);
 
         this.state = {
             timelast: '30m',
@@ -59,12 +65,28 @@ class HomePage extends React.Component {
             disable: "",
             logs: [],
             searchFilter: "",
-            modalActive: false
+            modalActive: false,
+            currentUser: null,
+            role: null
         }
+    }
+
+    loadUserList() {
+        this.loadUserSub = apiService.getUsers().subscribe({
+            next: (rs)=>{
+                rs = rs.data;
+                rs.content.unshift({username: ""});
+                this.userDataFlow.putData({type: 0, value: rs.content});
+            },
+            error: (err)=>{
+                toast.error(err.message);
+            }
+        });
     }
 
     componentDidMount() {
         this.searchLogQuerySnapshot = null;
+        this.searchFlow.next("");
         //reset
         this.setState({
             timelast: '30d',
@@ -74,12 +96,19 @@ class HomePage extends React.Component {
             logs: []
         });
         this.dataFlowService.putData({ type: 0, value: [] });
+        this.userDataFlow.putData({type: 0, value: []});
+        //load users
+        this.loadUserList();
     }
 
     componentWillUnmount() {
         if (this.searchLogSub) {
             this.searchLogSub.unsubscribe();
             this.searchLogSub = null;
+        }
+        if (this.loadUserSub) {
+            this.loadUserSub.unsubscribe();
+            this.loadUserSub = null;
         }
     }
 
@@ -104,14 +133,15 @@ class HomePage extends React.Component {
     }
 
     submitSearch() {
-        if (this.state.username.length == 0) {
-            toast.error("Username can not null");
-            return;
-        }
+        // if (this.state.username.length == 0) {
+        //     toast.error("Username can not null");
+        //     return;
+        // }
         this.disable();
-        let match = {
-            username: this.state.username
-        };
+        let match = {};
+        if (this.state.username.length > 0) {
+            match.username = this.state.username;
+        }
         if (this.state.projectname.length > 0) {
             match.project = this.state.projectname
         }
@@ -121,7 +151,7 @@ class HomePage extends React.Component {
             index: this.state.index,
             match: match,
             time: {
-                last: this.state.timelast
+                from: "now-" + this.state.timelast
             },
             limit: 100
         }
@@ -148,11 +178,12 @@ class HomePage extends React.Component {
     }
 
     requestMoreData(lastEl) {
+        if (!lastEl) return;
         if (this.searchLogQuerySnapshot) {
             let searchQuery = Object.assign({}, this.searchLogQuerySnapshot);
             searchQuery.time = {
-                gte: "now-" + this.searchLogQuerySnapshot.time.last,
-                lt: lastEl.timestamp
+                from: searchQuery.time.from,
+                to: lastEl.timestamp
             }
             this.disable();
             this.searchLogSub = apiService.searchLog(searchQuery)
@@ -189,7 +220,7 @@ class HomePage extends React.Component {
         this.setState({
             searchFilter: value
         });
-        searchFlow.putData(value);
+        this.searchFlow.next(value);
     }
 
     displayDetail(e) {
@@ -213,16 +244,26 @@ class HomePage extends React.Component {
                     <span>
                         Log view
                     </span>
-                    <div>
+                    <div style = {{display: userService.getRole() == 2 ? "none" : "block-inline", userSelect: "none"}}>
                         <span>Username</span>
-                        <input name="username" onChange={(e) => this.handeChange(e)} type="text" />
+                        <div className  = "username-choice" style = {{height: "30px", marginTop: "10px"}}>
+                            <PerformanceDropdown 
+                                choicesFlow = {this.userDataFlow.getDataFlow()} selected = {this.state.username} 
+                                getDisplay={(value)=>value.length > 0 ? value : "All user"}
+                                elHeight = {28}
+                                elComponent = {(props)=><div className = "user-item">{props.elValue.username.length > 0 ? props.elValue.username : "All user"}</div>}
+                                onChange = {(e)=>{this.setState({username: e.username})}}
+                            />
+                        </div>
                     </div>
+
                     <div>
-                        <span name="projectname">Project Id</span>
+                        <span name="projectname">Project</span>
                         <input name="projectname" onChange={(e) => this.handeChange(e)} type="text" />
                     </div>
                     <div>
-                        <span>Time</span>
+                        <span style={{display: userService.getRole () == 0?"block":"none"}}>Time</span>
+                        <DatePicker showTimeSelect dateFormat="MMMM dd, yyyy h:mm aa" onChange = {(date)=>console.log(date)}/>
                     </div>
                     {/* <Editable initValue = "Hello" /> */}
                     <br/>
@@ -247,7 +288,7 @@ class HomePage extends React.Component {
                             <DedayTextInput placeholder="Filter" onChange = {(e)=>{this.searchFilterChanged(e);}} debounceTime = {400}/>
                             {/* <input placeholder="Filter" value={this.state.searchFilter} onChange={(e)=>{this.searchFilterChanged(e);}} /> */}
                         </div>
-                        <div className={"name"}>Hoang</div>
+                        <div className={"name"}>{userService.getUsername()}</div>
                         <div className={"logout-btn"} style={{ cursor: 'pointer' }} onClick={this.logout}>Logout</div>
                         <div className={"user-picture"} />
                     </div>
@@ -276,71 +317,3 @@ class HomePage extends React.Component {
 }
 
 export default withRouter(HomePage);
-
-let indexOptions = [
-    {
-        display: "BACKEND SERVICE",
-        value: "backend_log"
-    }, {
-        display: "BACKEND SERVICE1",
-        value: "backend_log2"
-    }, {
-        display: "BACKEND SERVICE2",
-        value: "backend_log3"
-    }, {
-        display: "BACKEND SERVICE3",
-        value: "backend_log4"
-    }
-]
-
-
-let timeOptions = [
-    {
-        display: '1 min ago',
-        value: '1m'
-    },
-    {
-        display: '5 mins ago',
-        value: '5m'
-    },
-    {
-        display: '15 mins ago',
-        value: '15m'
-    },
-    {
-        display: '30 mins ago',
-        value: '30m'
-    },
-    {
-        display: '1 hour ago',
-        value: '1h'
-    },
-    {
-        display: '3 hours ago',
-        value: '3h'
-    },
-    {
-        display: '12 hours ago',
-        value: '12h'
-    },
-    {
-        display: '1 day ago',
-        value: '1d'
-    },
-    {
-        display: '3 days ago',
-        value: '3d'
-    },
-    {
-        display: '7 days ago',
-        value: '7d'
-    },
-    {
-        display: '15 days ago',
-        value: '15d'
-    },
-    {
-        display: '1 month ago',
-        value: '30d'
-    },
-];

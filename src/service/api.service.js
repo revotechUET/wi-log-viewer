@@ -19,9 +19,14 @@ function searchLog(payload) {
   return post(rootApi + '/log-view/search', payload);
 }
 
+function getUsers() {
+  return post(authApi + '/user/list', {});
+}
+
 module.exports = {
   login,
-  searchLog
+  searchLog,
+  getUsers
 }
 
 
