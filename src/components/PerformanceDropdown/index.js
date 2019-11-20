@@ -41,6 +41,7 @@ export default class PerformanceDropdown extends React.Component {
         });
         this.clickStream = fromEvent(document, 'click').subscribe((e)=>{
             if (!this.contentRef.current.contains(e.target)) {
+                console.log('click outside!');
                 if (this.state.edditing) this.setState({
                     edditing: false
                 });
@@ -58,7 +59,7 @@ export default class PerformanceDropdown extends React.Component {
             edditing: false
         });
         if (this.props.onChange) {
-            this.props.onChange(e.value);
+            this.props.onChange(e);
         }
     }
 
@@ -81,8 +82,8 @@ export default class PerformanceDropdown extends React.Component {
 
     render() {
         return (
-            <div style = {{position: "relative", display: "inline-block", width: "100%", height: "100%"}} onClick = {()=>{this.setState({edditing: !this.state.edditing})}} ref = {this.contentRef}>
-                <div >
+            <div style = {{position: "relative", display: "inline-block", width: "100%", height: "100%"}} ref = {this.contentRef}>
+                <div style = {{width: "100%", height: "100%"}} onClick = {()=>{this.setState({edditing: !this.state.edditing})}} >
                     {
                         this.props.getDisplay(this.props.selected)
                     }
@@ -103,7 +104,7 @@ export default class PerformanceDropdown extends React.Component {
                             <InfiniteScrollVirtualList dataFlow={this.filteredDataFlow} 
                                                     elHeight={this.props.elHeight}
                                                     elComponent = {this.props.elComponent}
-                                                    onElementClick = {(e)=>{this.setState({edditing: false});this.props.onChange(e);}}
+                                                    onElementClick = {(e)=>{this.handleClick(e);}}
                             />
                         </ReactResizeDetector>
 

@@ -20,13 +20,18 @@ function searchLog(payload) {
 }
 
 function getUsers() {
-  return post(authApi + '/user/list', {});
+  return post(authApi + '/company/users', {});
+}
+
+function getAllProjectFromUsers(payload) {
+  return post(rootApi + '/project/list-of-all-user', payload);
 }
 
 module.exports = {
   login,
   searchLog,
-  getUsers
+  getUsers,
+  getAllProjectFromUsers
 }
 
 

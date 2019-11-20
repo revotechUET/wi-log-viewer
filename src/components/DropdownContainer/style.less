@@ -1,0 +1,36 @@
+.dropdown-content-container {
+    z-index: 2;
+    position: absolute;
+    //top: 28px;
+    //right: -50%;
+    display: block;
+    box-shadow: 0 10px 29px #00000014;
+    .dropdown-carret {
+        position: absolute;
+        top: -20px;
+        //right: 50%;
+        transform: translateX(50%);
+        border: 10px solid transparent;
+        border-bottom-color: #a7abae;
+    }
+    .dropdown-content-children {
+        background-color: #fff;
+        border-radius: 0 0 2px 2px;
+        border: 1px solid #a7abae;
+        transition: all ease-in 0.2s;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        &>div {
+            &:hover {
+                background: transparent;
+            }
+        }
+    }
+}
+
+.hidden {
+    display: none
+}
+

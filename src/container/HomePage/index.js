@@ -20,10 +20,11 @@ import DataFlow from '../../utils/dataflow-builder.util';
 import searchFlow from './isolate.service';
 import Editable from '../../components/Editable';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import PerformanceDropdown from '../../components/PerformanceDropdown';
 import {findFilteredDataFn} from './../../utils/observable.util';
 
 import option from './constant';
-import PerformanceDropdown from '../../components/PerformanceDropdown';
+import TimeSelector from './TimeSelector';
 
 
 function MyLine(props) {
@@ -54,6 +55,7 @@ class HomePage extends React.Component {
         this.dataFlowService = new DataFlow({ type: 0, value: [] });
         this.searchFlow = new BehaviorSubject("");
         this.userDataFlow = new DataFlow({type: 0, value: []});
+        this.projectDataFlow = new DataFlow({type: 0, value: []});
 
         this.filteredDataFlow = combineLatest(this.dataFlowService.getDataFlow(), this.searchFlow).pipe(findFilteredDataFn);
 
@@ -61,7 +63,7 @@ class HomePage extends React.Component {
             timelast: '30m',
             index: "backend_log",
             username: "",
-            projectname: "",
+            project: {},
             disable: "",
             logs: [],
             searchFilter: "",
@@ -71,10 +73,11 @@ class HomePage extends React.Component {
         }
     }
 
-    loadUserList() {
+    initLoad() {
         this.loadUserSub = apiService.getUsers().subscribe({
             next: (rs)=>{
                 rs = rs.data;
+                this.loadProjectList(rs.content.map((e)=>e.username));
                 rs.content.unshift({username: ""});
                 this.userDataFlow.putData({type: 0, value: rs.content});
             },
@@ -84,24 +87,40 @@ class HomePage extends React.Component {
         });
     }
 
+    loadProjectList(users) {
+        this.loadProjectSub = apiService.getAllProjectFromUsers({users: users})
+        .subscribe({
+            next: (rs)=>{
+                rs = rs.data;
+                rs.content.unshift({idProject: -1, name: "All project"});
+                //console.log(rs.content);
+                this.projectDataFlow.putData({type: 0, value: rs.content});
+            },
+            error: (err)=>{
+                toast.error(err.message);
+            }
+        });
+    }
+
     componentDidMount() {
+        //reset
         this.searchLogQuerySnapshot = null;
         this.searchFlow.next("");
-        //reset
         this.setState({
             timelast: '30d',
             username: "",
-            projectname: "",
+            project: "",
             disable: "",
             logs: []
         });
         this.dataFlowService.putData({ type: 0, value: [] });
         this.userDataFlow.putData({type: 0, value: []});
+        this.projectDataFlow.putData({type: 0, value: []});
         //load users
-        this.loadUserList();
+        this.initLoad();
     }
 
-    componentWillUnmount() {
+    unsubscribeAll() {
         if (this.searchLogSub) {
             this.searchLogSub.unsubscribe();
             this.searchLogSub = null;
@@ -110,6 +129,14 @@ class HomePage extends React.Component {
             this.loadUserSub.unsubscribe();
             this.loadUserSub = null;
         }
+        if (this.loadProjectSub) {
+            this.loadProjectSub.unsubscribe();
+            this.loadProjectSub = null;
+        }
+    }
+
+    componentWillUnmount() {
+        this.unsubscribeAll();
     }
 
     handeChange(e) {
@@ -142,8 +169,8 @@ class HomePage extends React.Component {
         if (this.state.username.length > 0) {
             match.username = this.state.username;
         }
-        if (this.state.projectname.length > 0) {
-            match.project = this.state.projectname
+        if (this.state.project.idProject >= 0) {
+            match.project = this.state.project.name
         }
 
         //let search
@@ -244,7 +271,7 @@ class HomePage extends React.Component {
                     <span>
                         Log view
                     </span>
-                    <div style = {{display: userService.getRole() == 2 ? "none" : "block-inline", userSelect: "none"}}>
+                    <div > {/*style = {display: userService.getRole() == 2 ? "none" : "block-inline", userSelect: "none"}}*/}
                         <span>Username</span>
                         <div className  = "username-choice" style = {{height: "30px", marginTop: "10px"}}>
                             <PerformanceDropdown 
@@ -255,25 +282,24 @@ class HomePage extends React.Component {
                                 onChange = {(e)=>{this.setState({username: e.username})}}
                             />
                         </div>
+                        <span>Project: </span>
+                        <div className  = "project-choice" style = {{height: "30px", marginTop: "10px"}}>
+                            <PerformanceDropdown 
+                                choicesFlow = {this.projectDataFlow.getDataFlow()} 
+                                selected = {this.state.project} 
+                                getDisplay={(value)=>value.idProject >= 0 ? value.name : "All project"}
+                                elHeight = {28}
+                                elComponent = {(props)=><div className = "project-item">{props.elValue.idProject >= 0 ? props.elValue.name : "All project"}</div>}
+                                onChange = {(e)=>{this.setState({project: e})}}
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <TimeSelector />
                     </div>
 
-                    <div>
-                        <span name="projectname">Project</span>
-                        <input name="projectname" onChange={(e) => this.handeChange(e)} type="text" />
-                    </div>
-                    <div>
-                        <span style={{display: userService.getRole () == 0?"block":"none"}}>Time</span>
-                        <DatePicker showTimeSelect dateFormat="MMMM dd, yyyy h:mm aa" onChange = {(date)=>console.log(date)}/>
-                    </div>
-                    {/* <Editable initValue = "Hello" /> */}
                     <br/>
                     <br/>
-                    {/* <div>
-                        <span>Time</span>
-                        <select name="timelast" value={this.state.timelast} onChange={(e) => this.handeChange(e)}>
-                            {this.timeOptions.map((el, idx) => <option key={idx} value={el.value}>{el.display}</option>)}
-                        </select>
-                    </div> */}
 
                     <div className="submit" onClick={() => this.submitSearch()}>Submit</div>
 

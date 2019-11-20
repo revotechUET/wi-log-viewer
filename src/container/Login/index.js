@@ -98,6 +98,15 @@ class Login extends React.Component {
                 .subscribe({
                     next: (rs) => {
                         rs = rs.data;
+
+                        //check if role <2: 
+                        if (rs.content.user.role > 1) {
+                            //not allowed
+                            toast.error("Your account have no permission to access");
+                            this.enable();
+                            return;
+                        }
+                        
                         //this.cancelLoginSubmit();
                         userService.setToken(rs.content.token);
                         toast.success("Login successfully");
