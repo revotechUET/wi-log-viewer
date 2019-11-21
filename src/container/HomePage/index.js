@@ -17,7 +17,6 @@ import userService from '../../service/user.service';
 //import dataFlowService from './isolate.service';
 
 import DataFlow from '../../utils/dataflow-builder.util';
-import searchFlow from './isolate.service';
 import Editable from '../../components/Editable';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import PerformanceDropdown from '../../components/PerformanceDropdown';

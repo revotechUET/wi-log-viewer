@@ -60,6 +60,6 @@ module.exports = {
                 return null; 
             }
         }
-        return decoded.username;
+        return (decoded || {}).username;
     }
 }

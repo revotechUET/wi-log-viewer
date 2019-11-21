@@ -41,7 +41,6 @@ export default class PerformanceDropdown extends React.Component {
         });
         this.clickStream = fromEvent(document, 'click').subscribe((e)=>{
             if (!this.contentRef.current.contains(e.target)) {
-                console.log('click outside!');
                 if (this.state.edditing) this.setState({
                     edditing: false
                 });
