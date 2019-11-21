@@ -6,6 +6,8 @@ import DelayTextInput from '../DelayTextInput';
 /*
     props.choices: a list of object like {display: "bla", value: "blo"}
     props.selected: "null or object with display and value field"
+    props.onChange: "on change a value"
+    props.searchable: "put it into props to active search bar"
 */
 
 export default class SearchableDropdown extends React.Component {
@@ -60,6 +62,18 @@ export default class SearchableDropdown extends React.Component {
         return this.props.choices[idx].display;
     }
 
+    getSearchField() {
+        if (this.props.searchable) {
+            return (
+                <div className="dropdown-search">
+                <DelayTextInput placeholder="Search" 
+                onChange = {(e)=>{this.setState({searchValue: e})}}/>
+                </div>
+            )
+        }
+        return <div></div>
+    }
+
     render() {
         return (
             <div style = {{position: "relative", display: "inline-block"}} ref = {this.contentRef}>
@@ -70,9 +84,7 @@ export default class SearchableDropdown extends React.Component {
                 </div>
                 <div className = {this.state.edditing ? "dropdown-content" : "dropdown-content hidden"}>
                     <div className="dropdown-carret"></div>
-                    <div className="dropdown-search">
-                        <DelayTextInput placeholder="Search" onChange = {(e)=>{this.setState({searchValue: e})}}/>
-                    </div>
+                        {this.getSearchField()}
                     <div className="dropdown-list-item" style = {{maxHeight: this.props.maxHeight || "300px", overFlow: "auto"}}>
                         {this.getFilteredList(this.props.choices).map((e, idx) => (
                             <div key={idx} onClick = {()=>{this.handleClick(e)}} 

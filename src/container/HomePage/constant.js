@@ -92,8 +92,41 @@ let timeOptions = [
     },
 ];
 
+let relativeTime = [
+    {
+        display: "Seconds ago",
+        value: "s"
+    },
+    {
+        display: "Minutes ago",
+        value: "m"
+    },
+    {
+        display: "Hours ago",
+        value: "h"
+    },
+    {
+        display: "Days ago",
+        value: "d"
+    },
+    {
+        display: "Weeks ago",
+        value: "w"
+    },
+    {
+        display: "Months ago",
+        value: "M"
+    },
+    {
+        display: "Years ago",
+        value: "y"
+    }
+];
+
+
 
 export default {
     timeOptions: timeOptions,
-    indexOptions: indexOptions
+    indexOptions: indexOptions,
+    relativeTime: relativeTime
 }

@@ -68,7 +68,7 @@ class InfiniteScrollVirtualList extends React.Component{
         let clientHeight = e.target.clientHeight;
         e.preventDefault();
         // console.log('scrollTop:', scrollTop);
-        if (scrollHeight - scrollTop === clientHeight) {
+        if (scrollHeight - parseInt(scrollTop) === clientHeight) {
             if (this.props.onRequestMore) {
                 this.props.onRequestMore(this.state.list[this.state.list.length-1], this.state.list.length);
             }

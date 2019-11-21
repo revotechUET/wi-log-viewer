@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
 import { combineLatest, BehaviorSubject } from 'rxjs';
-import DatePicker from './../../components/DatePicker';
 
 import LoadingOverlay from '../../components/LoadingOverlay';
 import InfiniteScrollVirtualList from '../../components/InfiniteScrollVirtualList';
@@ -229,6 +228,16 @@ class HomePage extends React.Component {
         }
     }
 
+    timeToString(time) {
+        if (time.type == 0) {
+            return "now-" + time.value.number + time.value.relative;
+        } else if (time.type == 1) {
+            return time.value;
+        } else {
+            return "now";
+        }
+    }
+
     cancelSearchSubmit() {
         if (this.searchLogSub) {
             this.searchLogSub.unsubscribe();
@@ -326,7 +335,7 @@ class HomePage extends React.Component {
 
                 <LoadingOverlay active={this.state.disable} onCancel={this.cancelSearchSubmit} />
                 <CenteredModal onCancel = {()=>{this.onCancel()}} active = {this.state.modalActive}>
-                    <div style={{backgroundColor: "white", padding: "10px", border: "solid 1px blue"}}>
+                    <div style={{backgroundColor: "white", padding: "10px", border: "solid 1px blue", maxWidth: "800px"}}>
                         <pre>
                             <code>
                                 {
