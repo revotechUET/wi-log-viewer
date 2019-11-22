@@ -17,48 +17,15 @@ export default class TimeSelector extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            from: {
-                type: 0,
-                value: {
-                    number: 1,
-                    relative: "d"
-                }
-            },
-            to: {
-                type: 2,
-                value: "NOW"
-            }
-        }
     }
 
     componentDidMount() {
-        this.setState({
-            from: {
-                type: 0,
-                value: {
-                    number: 1,
-                    relative: "d"
-                }
-            },
-            to: {
-                type: 2,
-                value: "NOW"
-            }
-        });
+
     }
 
     onChangeTime(e, field) {
         //console.log(e);
-        if (field == 'from') {
-            this.setState({
-                from: e
-            })
-        } else {
-            this.setState({
-                to: e
-            })
-        }
+        this.props.onChange(e, field);
     }
 
     render() {
@@ -66,11 +33,11 @@ export default class TimeSelector extends React.Component {
             <div>
                 <div>
                     <span>From:</span>
-                    <TimePicker value={this.state.from} onChange={(e) => this.onChangeTime(e, 'from')} />
+                    <TimePicker value={this.props.from} onChange={(e) => this.onChangeTime(e, 'from')} />
                 </div>
                 <div>
                     <span>To:</span>
-                    <TimePicker value={this.state.to} onChange={(e) => this.onChangeTime(e, 'to')} />
+                    <TimePicker value={this.props.to} onChange={(e) => this.onChangeTime(e, 'to')} />
                 </div>
             </div>
         );
@@ -186,7 +153,7 @@ class TimePicker extends React.Component {
     render() {
         return (
             <div >
-                <DropdownContainer display={<DisplayTime />}>
+                <DropdownContainer display={<DisplayTime value = {this.props.value}/>}>
                     <div>
                         <input onChange={(e) => this.onTimeModeChange(e)}
                             type="radio" value={0}
@@ -213,9 +180,24 @@ class TimePicker extends React.Component {
 function DisplayTime(props) {
     return (
         <div className="display-time" style={{ height: "33px" }}>
-            TIME
+            {
+                (()=>{
+                    if (props.value.type == 0) { // relative
+                        return <span>{props.value.value.number + " " + getDisplayFromSymbol(props.value.value.relative)}</span>
+                    } else if (props.value.type == 1) {
+                        return <span>{props.value.value}</span>
+                    } else 
+                        return <span>NOW</span>
+                })()
+            }
         </div>
     );
+}
+
+function getDisplayFromSymbol(symbol) {
+    let idx = constant.relativeTime.findIndex((e)=>e.value == symbol);
+    if (idx >= 0) return constant.relativeTime[idx].display;
+    return null;
 }
 
 

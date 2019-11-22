@@ -1,7 +1,6 @@
 import React from 'react';
 
 import FixedHeightComponent from './FixedHeight.component';
-import { fromEvent } from 'rxjs';
 /*
     props:
         elHeight: element height,
@@ -68,7 +67,9 @@ class InfiniteScrollVirtualList extends React.Component{
         let clientHeight = e.target.clientHeight;
         e.preventDefault();
         // console.log('scrollTop:', scrollTop);
-        if (scrollHeight - parseInt(scrollTop) === clientHeight) {
+        // console.log('scrollHeight:', scrollHeight);
+        // console.log('clientHeight:', clientHeight);
+        if (scrollHeight - scrollTop === clientHeight) {
             if (this.props.onRequestMore) {
                 this.props.onRequestMore(this.state.list[this.state.list.length-1], this.state.list.length);
             }

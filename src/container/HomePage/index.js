@@ -67,7 +67,18 @@ class HomePage extends React.Component {
             searchFilter: "",
             modalActive: false,
             currentUser: null,
-            role: null
+            role: null,
+            from: {
+                type: 0,
+                value: {
+                    number: 1,
+                    relative: "d"
+                }
+            },
+            to: {
+                type: 2,
+                value: "NOW"
+            }
         }
     }
 
@@ -109,7 +120,18 @@ class HomePage extends React.Component {
             username: "",
             project: "",
             disable: "",
-            logs: []
+            logs: [],
+            from: {
+                type: 0,
+                value: {
+                    number: 1,
+                    relative: "d"
+                }
+            },
+            to: {
+                type: 2,
+                value: "NOW"
+            }
         });
         this.dataFlowService.putData({ type: 0, value: [] });
         this.userDataFlow.putData({type: 0, value: []});
@@ -176,7 +198,8 @@ class HomePage extends React.Component {
             index: this.state.index,
             match: match,
             time: {
-                from: "now-" + this.state.timelast
+                from: this.timeToString(this.state.from),
+                to: this.timeToString(this.state.to)
             },
             limit: 100
         }
@@ -271,6 +294,18 @@ class HomePage extends React.Component {
             modalValue: {}
         })
     }
+    
+    onTimeChange(e, field) {
+        if (field == 'from') {
+            this.setState({
+                from: e
+            })
+        } else {
+            this.setState({
+                to: e
+            })
+        }
+    }
 
     render() {
         return (
@@ -303,9 +338,8 @@ class HomePage extends React.Component {
                         </div>
                     </div>
                     <div>
-                        <TimeSelector />
+                        <TimeSelector from = {this.state.from} to = {this.state.to} onChange = {(e,f)=>this.onTimeChange(e, f)}/>
                     </div>
-
                     <br/>
                     <br/>
 
