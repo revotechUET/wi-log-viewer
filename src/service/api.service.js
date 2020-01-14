@@ -1,4 +1,4 @@
-let config = require('./../config/config');
+let config = require('../config');
 const Axios = require('axios-observable').Axios;
 let userService = require('./user.service');
 let from = require('rxjs').from;

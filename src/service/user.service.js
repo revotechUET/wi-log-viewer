@@ -1,6 +1,7 @@
 //user service
-const jwt = require('jsonwebtoken');
+const jwt = require('jwt-decode');
 let Subject = require('rxjs').Subject;
+let config = require('../config');
 
 let token = null;
 let decoded = null;
@@ -37,7 +38,7 @@ module.exports = {
         let token = this.getToken();
         if (token) {
             try {
-                decoded = jwt.verify(token, 'secretKey');
+                decoded = jwt(token);
                 return decoded.role;
             } catch (e) {
                 this.setToken(null);
@@ -52,7 +53,7 @@ module.exports = {
         let token = this.getToken();
         if (token) {
             try {
-                decoded = jwt.verify(token, 'secretKey');
+                decoded = jwt(token);
                 return decoded.username;
             } catch (e) {
                 this.setToken(null);
