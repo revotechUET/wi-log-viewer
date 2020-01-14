@@ -23,7 +23,7 @@ export default class DropdownContainer extends React.Component {
         this.setState({
             edditing: false
         });
-        this.clickStream = fromEvent(document, 'click').subscribe((e)=>{
+        this.clickStream = fromEvent(document, 'mousedown').subscribe((e)=>{
             if (!this.contentRef.current.contains(e.target)) {
                 if (this.state.edditing) this.setState({
                     edditing: false
